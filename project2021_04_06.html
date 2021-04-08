@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-width: 1024px;
+            min-height: 738px;
+            
+        }
+        .weather {
+            width: 100px;
+            
+            color: white;
+            
+        }
+        
+        .CurrTemp, .CurrIcon{
+            width: 50px;
+           font-size: 21px;
+           display: inline;
+        }
+        .CurrTemp {
+          
+        }
+
+        .CurrIcon {
+           
+        }
+
+        .City {
+          width: 100px;
+          font-size: 30px;
+        }
+        
+        #showtime {
+            
+            
+            position: absolute;
+            top: 30%;
+            left: 40%;
+            color: white;
+            width: 300px;
+            text-align: center;
+            
+            border: 0px solid black;
+            font-size: 60px;
+            font-style: bold;
+        }
+
+        #serch {
+            position: absolute;
+            top:50%;
+            left: 40%;
+            color: white;
+            border: none;
+            background: transparent;
+            border: 0px solid black;
+            text-align: center;
+            width: 300px;
+            height: 40px;
+            font-size: 25px;
+
+        }
+
+        #serch::placeholder {
+            color: white;
+            font-size: 25px;
+
+        }
+        #todoto{
+            position: absolute;
+            top: 60%;
+            left: 40%;
+            font-size: 0;
+        }
+        #todo{
+            
+            background: rgba(255,255,255,0.5);
+            color: white;
+            border: none;
+            text-align: center;
+            width: 240px;
+            height: 40px;
+            font-size: 20px;
+            
+        }
+        #todo::placeholder{
+            color: white;
+            font-size: 20px;
+        }
+        input:focus {outline:none;}
+
+        #OKbtn1{ 
+            
+            background: rgba(255,255,255,0.5);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 42px;
+            text-align: center;
+            font-size: 20px;
+            cursor: pointer;
+        } 
+        #ta{
+            position: absolute;
+            display: inline-block;
+            width: 300px;
+            height: 120px;
+            top: 70%;
+            left: 40%;
+            border: 0px solid black;
+            color: white;
+            text-align: center;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+
+
+<body>
+
+    <div class="weather"> 
+        <div class="CurrIcon"></div>
+        <div class="CurrTemp"></div>
+        <div class="City"></div>
+    </div>
+
+    <p id="showtime"></p>
+    
+    <input type="text" id="serch" onkeyup="nameenterkey();" placeholder="What is your name?">
+    
+    <div id = "todoto">
+    <input type="text" id="todo"  placeholder="Write a to do">
+    <input type="button" id = "OKbtn1" onclick = "todoclick()" value="√ OK">
+    </div>
+    
+    <div>
+        <table id="ta">
+            <tr><td></td></tr>
+        </table>
+    </div>
+    
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.15.2/js/all.js" integrity="sha384-vuFJ2JiSdUpXLKGK+tDteQZBqNlMwAjhZ3TvPaDfN9QmbPb7Q8qUpbSNapQev3YF" crossorigin="anonymous"></script>
+    
+    
+    <script> //날씨
+        $(document).ready(function() {
+            let weatherIcon = {
+                '01': 'fas fa-sun',
+                '02': 'fas fa-cloud-sun',
+                '03': 'fas fa-cloud',
+                '04': 'fas fa-cloud-meatball',
+                '09': 'fas fa-cloud-sun-rain',
+                '10': 'fas fa-cloud-showers-heavy',
+                '11': 'fas fa-poo-storm',
+                '13': 'far fa-snowflake',
+                '50': 'fas fa-smog'
+            };
+            $.ajax({
+                url: 'http://api.openweathermap.org/data/2.5/weather?q=Busan&APPID=b7ec0246a72b5279530e68ebad0bbe18&units=metric',
+                dataType: 'json',
+                type: 'GET',
+                success: function(data) {
+                    var $Icon = (data.weather[0].icon).substr(0, 2);
+                    var $Temp = Math.floor(data.main.temp) + 'ºC';
+                    var $city = data.name;
+                    $('.CurrIcon').append('<i class="' + weatherIcon[$Icon] + '"></i>');
+                    $('.CurrTemp').prepend($Temp);
+                    $('.City').append($city);
+                }
+            })
+        });
+
+    </script>
+
+    <script> //디지털 시계
+        function d_clock() {
+
+            var d_time = new Date();
+
+            var hours = d_time.getHours(); //시간
+
+            var minutes = d_time.getMinutes(); //분
+
+            var seconds = d_time.getSeconds(); //초
+            
+            
+            if (minutes < 10) {
+                minutes = "0"+minutes;
+            }
+            if (seconds < 10) {
+                seconds = "0"+seconds;
+            }
+            
+            document.getElementById("showtime").innerHTML = hours + ":" + minutes + ":" + seconds;
+            
+        }
+        d_clock(); //우선 한번 실행
+
+        setInterval(d_clock, 1000); // 1초당 반복 실행
+        
+    </script>
+    <script> //이름 입력시 환영인사
+        function nameenterkey(){
+            
+            var ck_time = new Date();
+            var hours = ck_time.getHours(); //시간
+            
+            if(window.event.keyCode==13){ //엔터키가 눌렸을때
+             // document.write("엔터 적용됩니다.");
+                var valueById = $('#serch').val();
+             //   alert(valueById);
+                
+                
+               if(valueById==""){
+                   alert("이름칸이 비어있습니다. 이름을 입력해주세요" );
+               }else if(hours>0&&hours<6){ //새벽
+                  document.getElementById("serch").value = valueById +"님 좋은 새벽입니다. "; 
+               }else if(hours>6&&hours<12){ //오전
+                  document.getElementById("serch").value = valueById +"님 좋은 오전입니다. "; 
+               }else if(hours>12&&hours<18){ //오후
+                  document.getElementById("serch").value = valueById +"님 좋은 오후입니다. "; 
+               }else if(hours>18&&hours<0){ //저녁
+                  document.getElementById("serch").value = valueById +"님 좋은 저녁입니다. "; 
+               }
+            }
+        }
+    </script>
+    <script>
+        function todoclick(){ // 할일메모
+            
+            
+            var todoval = $('#todo').val(); //입력한 내용 받아오기
+            //alert(todoval);
+            
+            const table = document.getElementById('ta');
+            //alert(ta);
+            
+            const  newRow= table.insertRow(0); //행추가하기
+            
+            
+              // 새 행(Row)에 Cell 추가
+
+            const newCell1 = newRow.insertCell(0); // 행에 0번째에 값넣기
+            //const newCell2 = newRow.insertCell(1); // 행에 1번째에 값넣기
+  
+            // Cell에 텍스트 추가
+            newCell1.innerText = todoval;
+            //newCell2.innerText = '테스트';
+        }
+    </script>
+    
+    <script> //배경화면변경
+        window.onload = function(){
+        const body=document.querySelector("body"); //body를 태그
+        const photoNum=7; //사진 갯수 7개
+
+            RanNum=Math.floor((Math.random()*photoNum)+1);//1~n까지 램덤숫자
+            url=`${RanNum}.png`; 
+            body.style.backgroundImage=`url(${url})`; //배경화면 적용
+        }
+    </script>
+</body>
+
+</html>
